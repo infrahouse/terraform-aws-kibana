@@ -8,7 +8,7 @@ module "kibana" {
   service_name                          = "${var.elasticsearch_cluster_name}-kibana"
   docker_image                          = "docker.elastic.co/kibana/kibana:8.12.0"
   load_balancer_subnets                 = var.load_balancer_subnets
-  asg_subnets                           = var.load_balancer_subnets
+  asg_subnets                           = var.asg_subnets
   zone_id                               = var.zone_id
   dns_names                             = ["${var.elasticsearch_cluster_name}-kibana"]
   internet_gateway_id                   = var.internet_gateway_id
