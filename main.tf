@@ -1,5 +1,6 @@
 module "kibana" {
-  source = "git::https://github.com/infrahouse/terraform-aws-ecs.git?ref=2.6.1"
+  source = "infrahouse/ecs/aws"
+  version = "= 2.6.1"
   providers = {
     aws     = aws
     aws.dns = aws.dns
