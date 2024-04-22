@@ -1,3 +1,9 @@
+variable "ami_id" {
+  description = "Image for host EC2 instances. If not specified, the latest Amazon image will be used."
+  type        = string
+  default     = null
+}
+
 variable "asg_subnets" {
   description = "Auto Scaling Group Subnets."
   type        = list(string)
