@@ -1,3 +1,9 @@
+variable "alb_internal" {
+  description = "If true, the LB will be internal."
+  type        = bool
+  default     = false
+}
+
 variable "ami_id" {
   description = "Image for host EC2 instances. If not specified, the latest Amazon image will be used."
   type        = string
