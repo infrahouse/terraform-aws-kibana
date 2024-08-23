@@ -40,7 +40,7 @@ you can provision Kibana.
 ```hcl
 module "kibana" {
   source  = "infrahouse/kibana/aws"
-  version = "~> 0.1"
+  version = "~> 1.0"
   providers = {
     aws     = aws
     aws.dns = aws
@@ -78,7 +78,7 @@ The kibana module will output URL where Kibana UI is available. User elastic use
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_kibana"></a> [kibana](#module\_kibana) | infrahouse/ecs/aws | = 2.7.0 |
+| <a name="module_kibana"></a> [kibana](#module\_kibana) | infrahouse/ecs/aws | 3.1.1 |
 
 ## Resources
 
