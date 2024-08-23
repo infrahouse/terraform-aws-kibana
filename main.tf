@@ -1,6 +1,6 @@
 module "kibana" {
-  source  = "infrahouse/ecs/aws"
-  version = "= 2.7.0"
+  source  = "registry.infrahouse.com/infrahouse/ecs/aws"
+  version = "= 3.4.2"
   providers = {
     aws     = aws
     aws.dns = aws.dns
@@ -15,6 +15,7 @@ module "kibana" {
   dns_names                             = ["${var.elasticsearch_cluster_name}-kibana"]
   internet_gateway_id                   = var.internet_gateway_id
   ssh_key_name                          = var.ssh_key_name
+  ssh_cidr_block                        = data.aws_vpc.selected.cidr_block
   container_port                        = 5601
   container_healthcheck_command         = "curl -sqf http://localhost:5601/status || exit 1"
   alb_healthcheck_path                  = "/login"
