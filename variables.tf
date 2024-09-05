@@ -47,6 +47,12 @@ variable "load_balancer_subnets" {
   type        = list(string)
 }
 
+variable "ssh_cidr_block" {
+  description = "CIDR range that is allowed to SSH into the backend instances"
+  type        = string
+  default     = null
+}
+
 variable "ssh_key_name" {
   description = "ssh key name installed in ECS host instances."
   type        = string
