@@ -15,7 +15,7 @@ module "kibana" {
   dns_names                             = ["${var.elasticsearch_cluster_name}-kibana"]
   internet_gateway_id                   = var.internet_gateway_id
   ssh_key_name                          = var.ssh_key_name
-  ssh_cidr_block                        = data.aws_vpc.selected.cidr_block
+  ssh_cidr_block                        = var.ssh_cidr_block
   container_port                        = 5601
   container_healthcheck_command         = "curl -sqf http://localhost:5601/status || exit 1"
   alb_healthcheck_path                  = "/login"
