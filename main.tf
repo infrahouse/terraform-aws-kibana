@@ -1,14 +1,13 @@
 module "kibana" {
   source  = "registry.infrahouse.com/infrahouse/ecs/aws"
-  version = "= 3.5.1"
+  version = "3.7.0"
   providers = {
     aws     = aws
     aws.dns = aws.dns
   }
-  service_name                          = "${var.elasticsearch_cluster_name}-kibana"
+  service_name                          = local.service_name
   docker_image                          = "docker.elastic.co/kibana/kibana:8.12.0"
   load_balancer_subnets                 = var.load_balancer_subnets
-  alb_internal                          = var.alb_internal
   ami_id                                = var.ami_id
   asg_subnets                           = var.asg_subnets
   zone_id                               = var.zone_id
