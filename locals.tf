@@ -2,7 +2,7 @@ locals {
   kibana_url      = "https://${var.elasticsearch_cluster_name}-kibana.${data.aws_route53_zone.kibana_zone.name}"
   kibana_username = "kibana_system"
   kibana_password = var.kibana_system_password
-  service_name = "${var.elasticsearch_cluster_name}-kibana"
+  service_name    = "${var.elasticsearch_cluster_name}-kibana"
   default_module_tags = {
     environment : var.environment
     service : local.service_name
