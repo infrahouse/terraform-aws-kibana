@@ -9,3 +9,7 @@ output "kibana_username" {
 output "kibana_password" {
   value = local.kibana_password
 }
+
+output "load_balancer_arn" {
+  value = module.kibana.load_balancer_arn
+}
