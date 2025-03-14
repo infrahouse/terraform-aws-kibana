@@ -62,6 +62,10 @@ module "kibana" {
         name : "ELASTICSEARCH_PASSWORD",
         value : local.kibana_password
       },
+      {
+        name : "ELASTICSEARCH_REQUEST_TIMEOUT",
+        value : "300000"
+      }
     ],
   )
 }
