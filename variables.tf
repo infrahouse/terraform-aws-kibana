@@ -25,12 +25,17 @@ variable "elasticsearch_url" {
   type        = string
 }
 
+variable "elasticsearch_request_timeout" {
+  description = "Elasticsearch request timeout."
+  type        = string
+  default     = "300000"
+}
+
 variable "environment" {
   description = "Name of environment."
   type        = string
   default     = "development"
 }
-
 
 variable "internet_gateway_id" {
   description = "Internet gateway id. Usually created by 'infrahouse/service-network/aws'"
