@@ -64,7 +64,7 @@ module "kibana" {
       },
       {
         name : "ELASTICSEARCH_REQUEST_TIMEOUT",
-        value : "300000"
+        value : var.elasticsearch_request_timeout
       }
     ],
   )

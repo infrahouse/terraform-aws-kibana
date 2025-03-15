@@ -78,13 +78,14 @@ The kibana module will output URL where Kibana UI is available. User elastic use
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_kibana"></a> [kibana](#module\_kibana) | registry.infrahouse.com/infrahouse/ecs/aws | = 3.5.1 |
+| <a name="module_kibana"></a> [kibana](#module\_kibana) | registry.infrahouse.com/infrahouse/ecs/aws | 5.3.0 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
 | [random_string.kibana-encryptionKey](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_route53_zone.kibana_zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
 | [aws_subnet.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet) | data source |
 | [aws_vpc.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
@@ -97,6 +98,7 @@ The kibana module will output URL where Kibana UI is available. User elastic use
 | <a name="input_ami_id"></a> [ami\_id](#input\_ami\_id) | Image for host EC2 instances. If not specified, the latest Amazon image will be used. | `string` | `null` | no |
 | <a name="input_asg_subnets"></a> [asg\_subnets](#input\_asg\_subnets) | Auto Scaling Group Subnets. | `list(string)` | n/a | yes |
 | <a name="input_elasticsearch_cluster_name"></a> [elasticsearch\_cluster\_name](#input\_elasticsearch\_cluster\_name) | Elasticsearch cluster name. | `string` | n/a | yes |
+| <a name="input_elasticsearch_request_timeout"></a> [elasticsearch\_request\_timeout](#input\_elasticsearch\_request\_timeout) | Elasticsearch request timeout. | `string` | `"300000"` | no |
 | <a name="input_elasticsearch_url"></a> [elasticsearch\_url](#input\_elasticsearch\_url) | URL of Elasticsearch masters. | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | Name of environment. | `string` | `"development"` | no |
 | <a name="input_internet_gateway_id"></a> [internet\_gateway\_id](#input\_internet\_gateway\_id) | Internet gateway id. Usually created by 'infrahouse/service-network/aws' | `string` | n/a | yes |
@@ -108,9 +110,9 @@ The kibana module will output URL where Kibana UI is available. User elastic use
 
 ## Outputs
 
-| Name                                                                                        | Description |
-|---------------------------------------------------------------------------------------------|-------------|
-| <a name="output_kibana_password"></a> [kibana\_password](#output\_kibana\_password)         | n/a |
-| <a name="output_kibana_url"></a> [kibana\_url](#output\_kibana\_url)                        | n/a |
-| <a name="output_kibana_username"></a> [kibana\_username](#output\_kibana\_username)         | n/a |
+| Name | Description |
+|------|-------------|
+| <a name="output_kibana_password"></a> [kibana\_password](#output\_kibana\_password) | n/a |
+| <a name="output_kibana_url"></a> [kibana\_url](#output\_kibana\_url) | n/a |
+| <a name="output_kibana_username"></a> [kibana\_username](#output\_kibana\_username) | n/a |
 | <a name="output_load_balancer_arn"></a> [load\_balancer\_arn](#output\_load\_balancer\_arn) | n/a |
