@@ -1,5 +1,5 @@
-variable "alb_internal" {
-  description = "If true, the LB will be internal."
+variable "access_log_force_destroy" {
+  description = "Destroy S3 bucket with access logs even if non-empty"
   type        = bool
   default     = false
 }
@@ -26,9 +26,9 @@ variable "elasticsearch_url" {
 }
 
 variable "elasticsearch_request_timeout" {
-  description = "Elasticsearch request timeout."
-  type        = string
-  default     = "300000"
+  description = "Elasticsearch request timeout in seconds."
+  type        = number
+  default     = 4000
 }
 
 variable "environment" {

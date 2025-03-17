@@ -1,6 +1,6 @@
 module "kibana" {
   source  = "registry.infrahouse.com/infrahouse/ecs/aws"
-  version = "5.3.0"
+  version = "5.4.0"
   providers = {
     aws     = aws
     aws.dns = aws.dns
@@ -19,15 +19,17 @@ module "kibana" {
   container_healthcheck_command     = "curl -sqf http://localhost:5601/status || exit 1"
   healthcheck_path                  = "/login"
   healthcheck_response_code_matcher = "200"
-  idle_timeout                      = 600
-  task_desired_count                = 1
-  asg_health_check_grace_period     = 900
-  healthcheck_interval              = 300
-  asg_min_size                      = 1
-  asg_instance_type                 = "t3.medium" # 2vCPU, 4GB RAM
-  container_cpu                     = 1024        # One vCPU is 1024
-  container_memory                  = 2 * 1024    # Value in MB
-  environment                       = var.environment
+  enable_cloudwatch_logs            = true
+  access_log_force_destroy          = var.access_log_force_destroy
+
+  idle_timeout                              = var.elasticsearch_request_timeout
+  asg_health_check_grace_period             = 900
+  service_health_check_grace_period_seconds = 900
+
+  asg_instance_type = "t3.medium" # 2vCPU, 4GB RAM
+  container_cpu     = 1024        # One vCPU is 1024
+  container_memory  = 2 * 1024    # Value in MB
+  environment       = var.environment
   task_environment_variables = concat(
     [
       {
@@ -39,18 +41,6 @@ module "kibana" {
         value : var.elasticsearch_url
       },
       {
-        name : "XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY",
-        value : random_string.kibana-encryptionKey.result
-      },
-      {
-        name : "XPACK_SECURITY_ENCRYPTIONKEY",
-        value : random_string.kibana-encryptionKey.result
-      },
-      {
-        name : "XPACK_REPORTING_ENCRYPTIONKEY",
-        value : random_string.kibana-encryptionKey.result
-      },
-      {
         name : "SERVER_PUBLICBASEURL",
         value : local.kibana_url
       },
@@ -59,18 +49,31 @@ module "kibana" {
         value : local.kibana_username
       },
       {
-        name : "ELASTICSEARCH_PASSWORD",
-        value : local.kibana_password
-      },
-      {
         name : "ELASTICSEARCH_REQUEST_TIMEOUT",
-        value : var.elasticsearch_request_timeout
+        value : var.elasticsearch_request_timeout * 1000
       }
     ],
   )
-}
+  execution_extra_policy = {
+    "allow_secrets" : aws_iam_policy.task_role_exec.arn
+  }
+  task_secrets = [
+    {
+      name : "XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY",
+      valueFrom : module.kibana-encryptionKey.secret_arn
+    },
+    {
+      name : "XPACK_SECURITY_ENCRYPTIONKEY",
+      valueFrom : module.kibana-encryptionKey.secret_arn
+    },
+    {
+      name : "XPACK_REPORTING_ENCRYPTIONKEY",
+      valueFrom : module.kibana-encryptionKey.secret_arn
+    },
+    {
+      name : "ELASTICSEARCH_PASSWORD",
+      valueFrom : module.kibana-password.secret_arn
+    },
+  ]
 
-resource "random_string" "kibana-encryptionKey" {
-  length  = 32
-  special = false
 }

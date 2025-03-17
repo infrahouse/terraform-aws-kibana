@@ -1,9 +1,11 @@
+variable "elasticsearch_request_timeout" {
+}
 variable "environment" {
   default = "development"
 }
 variable "region" {}
 variable "role_arn" {}
-variable "zone_id" {
+variable "test_zone" {
 }
 
 variable "asg_subnets" {
