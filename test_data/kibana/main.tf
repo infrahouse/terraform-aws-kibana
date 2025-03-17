@@ -11,5 +11,8 @@ module "kibana" {
   kibana_system_password     = var.kibana_system_password
   load_balancer_subnets      = var.load_balancer_subnets
   ssh_key_name               = var.ssh_key_name
-  zone_id                    = var.zone_id
+  zone_id                    = data.aws_route53_zone.test.zone_id
+  access_log_force_destroy   = true
+
+  elasticsearch_request_timeout = var.elasticsearch_request_timeout
 }
