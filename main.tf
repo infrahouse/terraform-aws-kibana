@@ -1,27 +1,27 @@
 module "kibana" {
   source  = "registry.infrahouse.com/infrahouse/ecs/aws"
-  version = "5.5.0"
+  version = "5.7.1"
   providers = {
     aws     = aws
     aws.dns = aws.dns
   }
-  service_name                      = local.service_name
-  docker_image                      = "docker.elastic.co/kibana/kibana:8.12.0"
-  load_balancer_subnets             = var.load_balancer_subnets
-  ami_id                            = var.ami_id
-  asg_subnets                       = var.asg_subnets
-  zone_id                           = var.zone_id
-  dns_names                         = ["${var.elasticsearch_cluster_name}-kibana"]
-  internet_gateway_id               = var.internet_gateway_id
-  ssh_key_name                      = var.ssh_key_name
-  ssh_cidr_block                    = var.ssh_cidr_block
-  container_port                    = 5601
-  container_healthcheck_command     = "curl -sqf http://localhost:5601/status || exit 1"
-  healthcheck_path                  = "/login"
-  healthcheck_response_code_matcher = "200"
-  enable_cloudwatch_logs            = true
-  access_log_force_destroy          = var.access_log_force_destroy
-
+  service_name                              = local.service_name
+  docker_image                              = "docker.elastic.co/kibana/kibana:8.12.0"
+  load_balancer_subnets                     = var.load_balancer_subnets
+  ami_id                                    = var.ami_id
+  asg_subnets                               = var.asg_subnets
+  zone_id                                   = var.zone_id
+  dns_names                                 = ["${var.elasticsearch_cluster_name}-kibana"]
+  internet_gateway_id                       = var.internet_gateway_id
+  ssh_key_name                              = var.ssh_key_name
+  ssh_cidr_block                            = var.ssh_cidr_block
+  container_port                            = 5601
+  container_healthcheck_command             = "curl -sqf http://localhost:5601/status || exit 1"
+  healthcheck_path                          = "/login"
+  healthcheck_response_code_matcher         = "200"
+  enable_cloudwatch_logs                    = true
+  access_log_force_destroy                  = var.access_log_force_destroy
+  extra_instance_profile_permissions        = var.extra_instance_profile_permissions
   idle_timeout                              = var.elasticsearch_request_timeout
   asg_health_check_grace_period             = 900
   service_health_check_grace_period_seconds = 900
