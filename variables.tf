@@ -67,3 +67,9 @@ variable "zone_id" {
   description = "Zone where DNS records will be created for the service and certificate validation."
   type        = string
 }
+
+variable "extra_instance_profile_permissions" {
+  description = "A JSON with a permissions policy document. The policy will be attached to the ASG instance profile."
+  type        = string
+  default     = null
+}
