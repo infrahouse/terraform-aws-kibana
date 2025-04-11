@@ -18,6 +18,7 @@ module "kibana" {
   container_port                            = 5601
   container_healthcheck_command             = "curl -sqf http://localhost:5601/status || exit 1"
   healthcheck_path                          = "/login"
+  cloudinit_extra_commands                  = var.cloudinit_extra_commands
   healthcheck_response_code_matcher         = "200"
   enable_cloudwatch_logs                    = true
   access_log_force_destroy                  = var.access_log_force_destroy
