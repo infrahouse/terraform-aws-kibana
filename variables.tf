@@ -79,3 +79,9 @@ variable "cloudinit_extra_commands" {
   type        = list(string)
   default     = []
 }
+
+variable "on_demand_base_capacity" {
+  description = "If specified, the ASG will request spot instances and this will be the minimal number of on-demand instances."
+  type        = number
+  default     = null
+}
