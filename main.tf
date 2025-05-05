@@ -1,6 +1,6 @@
 module "kibana" {
   source  = "registry.infrahouse.com/infrahouse/ecs/aws"
-  version = "5.7.1"
+  version = "5.8.0"
   providers = {
     aws     = aws
     aws.dns = aws.dns
@@ -21,6 +21,7 @@ module "kibana" {
   cloudinit_extra_commands                  = var.cloudinit_extra_commands
   healthcheck_response_code_matcher         = "200"
   enable_cloudwatch_logs                    = true
+  on_demand_base_capacity                   = var.on_demand_base_capacity
   access_log_force_destroy                  = var.access_log_force_destroy
   extra_instance_profile_permissions        = var.extra_instance_profile_permissions
   idle_timeout                              = var.elasticsearch_request_timeout
