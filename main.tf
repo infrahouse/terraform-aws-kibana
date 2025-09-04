@@ -1,6 +1,6 @@
 module "kibana" {
   source  = "registry.infrahouse.com/infrahouse/ecs/aws"
-  version = "5.10.1"
+  version = "5.11.0"
   providers = {
     aws     = aws
     aws.dns = aws.dns
