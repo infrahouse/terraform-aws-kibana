@@ -1,5 +1,9 @@
 .DEFAULT_GOAL := help
 
+TEST_REGION="us-west-2"
+TEST_ROLE="arn:aws:iam::303467602807:role/kibana-tester"
+TEST_SELECTOR="test_module"
+
 define PRINT_HELP_PYSCRIPT
 import re, sys
 
@@ -10,6 +14,9 @@ for line in sys.stdin:
         print("%-40s %s" % (target, help))
 endef
 export PRINT_HELP_PYSCRIPT
+TEST_REGION="us-west-2"
+TEST_ROLE="arn:aws:iam::303467602807:role/kibana-tester"
+TEST_SELECTOR="aws-5"
 
 help: install-hooks
 	@python -c "$$PRINT_HELP_PYSCRIPT" < Makefile
@@ -24,21 +31,43 @@ install-hooks:  ## Install repo hooks
 
 .PHONY: test
 test:  ## Run tests on the module
-	rm -f test_data/test_module/.terraform.lock.hcl
-	#rm -rf test_data/test_module/.terraform
 	pytest -xvvs tests/
+
+.PHONY: test-keep
+test-keep: ## Run a test and keep resources
+	pytest -xvvs \
+		--aws-region=${TEST_REGION} \
+		--test-role-arn=${TEST_ROLE} \
+		-k $(TEST_SELECTOR) \
+		--keep-after \
+		tests/test_module.py 2>&1 | tee pytest-$(shell date +%Y%m%d-%H%M%S)-output.log
+
+.PHONY: test-clean
+test-clean: ## Run a test and destroy resources
+	pytest -xvvs \
+		--aws-region=${TEST_REGION} \
+		--test-role-arn=${TEST_ROLE} \
+		-k $(TEST_SELECTOR) \
+		tests/test_module.py 2>&1 | tee pytest-$(shell date +%Y%m%d-%H%M%S)-output.log
 
 
 .PHONY: bootstrap
 bootstrap: ## bootstrap the development environment
-	pip install -U "pip ~= 23.1"
-	pip install -U "setuptools ~= 68.0"
+	pip install -U "pip ~= 25.2"
+	pip install -U "setuptools ~= 80.9"
 	pip install -r requirements.txt
 
 .PHONY: clean
 clean: ## clean the repo from cruft
 	rm -rf .pytest_cache
 	find . -name '.terraform' -exec rm -fr {} +
+
+.PHONY: lint
+lint:  ## Check code style without modifying files
+	@echo "Checking terraform file formatting"
+	terraform fmt -recursive -check
+	@echo "Checking Python code style"
+	black --check tests
 
 .PHONY: fmt
 fmt: format
