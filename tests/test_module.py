@@ -20,7 +20,7 @@ def test_module(
     aws_region,
     keep_after,
     test_role_arn,
-    test_zone_name,
+    subzone,
     cleanup_ecs_task_definitions,
     aws_provider_version,
 ):
@@ -50,6 +50,7 @@ def test_module(
     kibana_system_password = elasticsearch["kibana_system_password"]["value"]
     keypair_name = elasticsearch["keypair_name"]["value"]
     idle_timeout_master = elasticsearch["idle_timeout_master"]["value"]
+    test_zone_id  = subzone["subzone_id"]["value"]
 
     # Generate terraform.tf with specified AWS provider version
     with open(osp.join(terraform_dir, "terraform.tf"), "w") as fp:
@@ -72,7 +73,7 @@ def test_module(
 
     with open(osp.join(terraform_dir, "terraform.tfvars"), "w") as fp:
         fp.write(f'region = "{aws_region}"\n')
-        fp.write(f'test_zone = "{test_zone_name}"\n')
+        fp.write(f'test_zone_id = "{test_zone_id}"\n')
         fp.write(f"asg_subnets = {json.dumps(subnet_public_ids)}\n")
         fp.write(f'cluster_name = "{cluster_name}"\n')
         fp.write(f'elasticsearch_url = "{elasticsearch_url}"\n')
