@@ -50,7 +50,7 @@ def test_module(
     kibana_system_password = elasticsearch["kibana_system_password"]["value"]
     keypair_name = elasticsearch["keypair_name"]["value"]
     idle_timeout_master = elasticsearch["idle_timeout_master"]["value"]
-    test_zone_id  = subzone["subzone_id"]["value"]
+    test_zone_id = subzone["subzone_id"]["value"]
 
     # Generate terraform.tf with specified AWS provider version
     with open(osp.join(terraform_dir, "terraform.tf"), "w") as fp:
