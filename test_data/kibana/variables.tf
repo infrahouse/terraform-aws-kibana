@@ -4,9 +4,10 @@ variable "environment" {
   default = "development"
 }
 variable "region" {}
-variable "role_arn" {}
-variable "test_zone" {
+variable "role_arn" {
+  default = null
 }
+variable "test_zone_id" {}
 
 variable "asg_subnets" {
 }
