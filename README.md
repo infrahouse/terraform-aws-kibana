@@ -40,7 +40,7 @@ you can provision Kibana.
 ```hcl
 module "kibana" {
   source  = "infrahouse/kibana/aws"
-  version = "1.13.0"
+  version = "1.13.1"
   providers = {
     aws     = aws
     aws.dns = aws
