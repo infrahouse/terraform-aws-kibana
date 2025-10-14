@@ -16,7 +16,7 @@ endef
 export PRINT_HELP_PYSCRIPT
 TEST_REGION="us-west-2"
 TEST_ROLE="arn:aws:iam::303467602807:role/kibana-tester"
-TEST_SELECTOR="aws-5"
+TEST_SELECTOR="aws-6"
 
 help: install-hooks
 	@python -c "$$PRINT_HELP_PYSCRIPT" < Makefile
