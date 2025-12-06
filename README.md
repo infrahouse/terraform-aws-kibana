@@ -40,7 +40,7 @@ you can provision Kibana.
 ```hcl
 module "kibana" {
   source  = "infrahouse/kibana/aws"
-  version = "~> 2.0"
+  version = "1.13.1"
   providers = {
     aws     = aws
     aws.dns = aws
@@ -163,8 +163,8 @@ The kibana module will output URL where Kibana UI is available. User elastic use
 
 | Name | Description |
 |------|-------------|
-| <a name="output_kibana_password"></a> [kibana\_password](#output\_kibana\_password) | n/a |
-| <a name="output_kibana_url"></a> [kibana\_url](#output\_kibana\_url) | n/a |
-| <a name="output_kibana_username"></a> [kibana\_username](#output\_kibana\_username) | n/a |
-| <a name="output_load_balancer_arn"></a> [load\_balancer\_arn](#output\_load\_balancer\_arn) | n/a |
+| <a name="output_kibana_password"></a> [kibana\_password](#output\_kibana\_password) | Password for Kibana authentication |
+| <a name="output_kibana_url"></a> [kibana\_url](#output\_kibana\_url) | URL where Kibana UI is available |
+| <a name="output_kibana_username"></a> [kibana\_username](#output\_kibana\_username) | Username for Kibana authentication |
+| <a name="output_load_balancer_arn"></a> [load\_balancer\_arn](#output\_load\_balancer\_arn) | ARN of the load balancer for Kibana service |
 <!-- END_TF_DOCS -->
