@@ -23,23 +23,6 @@ All notable changes to this project will be documented in this file.
 
 - Mark kibana_system_password as sensitive
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
-
-### Security
-- Mark kibana_system_password as sensitive ([68067c3](https://github.com/infrahouse/terraform-aws-kibana/commit/68067c3))
-
-### Documentation
-- Add output descriptions and mark password as sensitive ([0967567](https://github.com/infrahouse/terraform-aws-kibana/commit/0967567))
-
-### Breaking Changes
-- Upgrade ECS module to v7.0.0 ([393acd9](https://github.com/infrahouse/terraform-aws-kibana/commit/393acd9))
-
-### Chores
-- Prepare for ECS v7 upgrade ([16383e1](https://github.com/infrahouse/terraform-aws-kibana/commit/16383e1))
-
 ## [1.13.1] - 2024-XX-XX
 
 ### Changed
