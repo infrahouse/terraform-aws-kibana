@@ -45,6 +45,7 @@ variable "environment" {
 variable "kibana_system_password" {
   description = "Password for kibana_system user. This user is an Elasticsearch built-in user."
   type        = string
+  sensitive   = true
 }
 
 variable "load_balancer_subnets" {
