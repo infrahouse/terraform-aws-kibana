@@ -35,20 +35,20 @@ module "elasticsearch" {
 
 ## Kibana
 
-One the Elasticsearch cluster is ready (and by "ready" I mean master and data nodes are up & running), 
+One the Elasticsearch cluster is ready (and by "ready" I mean master and data nodes are up & running),
 you can provision Kibana.
 ```hcl
 module "kibana" {
   source  = "infrahouse/kibana/aws"
-  version = "1.13.1"
+  version = "~> 2.0"
   providers = {
     aws     = aws
     aws.dns = aws
   }
+  alert_emails               = ["ops-team@example.com"]
   asg_subnets                = module.service-network.subnet_private_ids
   elasticsearch_cluster_name = "some-cluster-name"
   elasticsearch_url          = var.elasticsearch_url
-  internet_gateway_id        = module.service-network.internet_gateway_id
   kibana_system_password     = module.elasticsearch.kibana_system_password
   load_balancer_subnets      = module.service-network.subnet_public_ids
   ssh_key_name               = aws_key_pair.test.key_name
@@ -56,10 +56,51 @@ module "kibana" {
 }
 ```
 Note the inputs:
+* `alert_emails` - list of email addresses for CloudWatch alarm notifications (required for monitoring ECS service health)
 * `asg_subnets` - these are subnet ids where autoscaling group with EC2 instance for Kibana ECS will be created. They need to be private subnets - you don't want to expose them to Internet.
 * `load_balancer_subnets` - these are subnet ids where the load balancer will be created. Can be public, but I recommend to deploy the load balancer in the private subnets and configure VPN access for users that need Kibana.
 
 The kibana module will output URL where Kibana UI is available. User elastic username and its password to access Kibana first time.
+
+## Migration from v1.x to v2.x
+
+**This is a breaking change.** Version 2.0.0 upgrades the underlying ECS module from v5 to v7.
+
+### Breaking Changes
+
+1. **New Required Variable: `alert_emails`**
+   - You must now provide at least one email address for CloudWatch alarm notifications
+   - Add `alert_emails = ["your-email@example.com"]` to your module call
+
+2. **Removed Variable: `internet_gateway_id`**
+   - The internet gateway is now auto-detected by the module
+   - Remove `internet_gateway_id` from your module configuration
+
+3. **Default Behavior Changes**
+   - CloudWatch logs are now enabled by default (was disabled in v1.x)
+   - CPU autoscaling threshold lowered from 80% to 60%
+   - Default AMI changed from Amazon Linux 2 to Amazon Linux 2023 (if not explicitly set)
+
+### Migration Steps
+
+1. Add the required `alert_emails` parameter:
+   ```hcl
+   alert_emails = ["ops-team@example.com"]
+   ```
+
+2. Remove the `internet_gateway_id` parameter (if present):
+   ```diff
+   - internet_gateway_id = module.service-network.internet_gateway_id
+   ```
+
+3. Update the module version:
+   ```hcl
+   version = "~> 2.0"
+   ```
+
+4. Run `terraform init -upgrade` to download the new module version
+
+5. Review the terraform plan for expected changes before applying
 
 <!-- BEGIN_TF_DOCS -->
 
@@ -81,9 +122,9 @@ The kibana module will output URL where Kibana UI is available. User elastic use
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_kibana"></a> [kibana](#module\_kibana) | registry.infrahouse.com/infrahouse/ecs/aws | 5.12.0 |
-| <a name="module_kibana-encryptionKey"></a> [kibana-encryptionKey](#module\_kibana-encryptionKey) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.0 |
-| <a name="module_kibana-password"></a> [kibana-password](#module\_kibana-password) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.0 |
+| <a name="module_kibana"></a> [kibana](#module\_kibana) | registry.infrahouse.com/infrahouse/ecs/aws | 7.0.0 |
+| <a name="module_kibana-encryptionKey"></a> [kibana-encryptionKey](#module\_kibana-encryptionKey) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.1 |
+| <a name="module_kibana-password"></a> [kibana-password](#module\_kibana-password) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.1 |
 
 ## Resources
 
@@ -102,6 +143,7 @@ The kibana module will output URL where Kibana UI is available. User elastic use
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_access_log_force_destroy"></a> [access\_log\_force\_destroy](#input\_access\_log\_force\_destroy) | Destroy S3 bucket with access logs even if non-empty | `bool` | `false` | no |
+| <a name="input_alert_emails"></a> [alert\_emails](#input\_alert\_emails) | List of email addresses for CloudWatch alarm notifications | `list(string)` | n/a | yes |
 | <a name="input_ami_id"></a> [ami\_id](#input\_ami\_id) | Image for host EC2 instances. If not specified, the latest Amazon image will be used. | `string` | `null` | no |
 | <a name="input_asg_subnets"></a> [asg\_subnets](#input\_asg\_subnets) | Auto Scaling Group Subnets. | `list(string)` | n/a | yes |
 | <a name="input_cloudinit_extra_commands"></a> [cloudinit\_extra\_commands](#input\_cloudinit\_extra\_commands) | Extra commands for run on ASG. | `list(string)` | `[]` | no |
@@ -110,7 +152,6 @@ The kibana module will output URL where Kibana UI is available. User elastic use
 | <a name="input_elasticsearch_url"></a> [elasticsearch\_url](#input\_elasticsearch\_url) | URL of Elasticsearch masters. | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | Name of environment. | `string` | `"development"` | no |
 | <a name="input_extra_instance_profile_permissions"></a> [extra\_instance\_profile\_permissions](#input\_extra\_instance\_profile\_permissions) | A JSON with a permissions policy document. The policy will be attached to the ASG instance profile. | `string` | `null` | no |
-| <a name="input_internet_gateway_id"></a> [internet\_gateway\_id](#input\_internet\_gateway\_id) | Internet gateway id. Usually created by 'infrahouse/service-network/aws' | `string` | n/a | yes |
 | <a name="input_kibana_system_password"></a> [kibana\_system\_password](#input\_kibana\_system\_password) | Password for kibana\_system user. This user is an Elasticsearch built-in user. | `string` | n/a | yes |
 | <a name="input_load_balancer_subnets"></a> [load\_balancer\_subnets](#input\_load\_balancer\_subnets) | Load Balancer Subnets. | `list(string)` | n/a | yes |
 | <a name="input_on_demand_base_capacity"></a> [on\_demand\_base\_capacity](#input\_on\_demand\_base\_capacity) | If specified, the ASG will request spot instances and this will be the minimal number of on-demand instances. | `number` | `null` | no |

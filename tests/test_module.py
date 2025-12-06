@@ -74,10 +74,10 @@ def test_module(
     with open(osp.join(terraform_dir, "terraform.tfvars"), "w") as fp:
         fp.write(f'region = "{aws_region}"\n')
         fp.write(f'test_zone_id = "{test_zone_id}"\n')
+        fp.write(f'alert_emails = ["kibana-test@example.com"]\n')
         fp.write(f"asg_subnets = {json.dumps(subnet_public_ids)}\n")
         fp.write(f'cluster_name = "{cluster_name}"\n')
         fp.write(f'elasticsearch_url = "{elasticsearch_url}"\n')
-        fp.write(f'internet_gateway_id = "{internet_gateway_id}"\n')
         fp.write(f'kibana_system_password = "{kibana_system_password}"\n')
         fp.write(f"load_balancer_subnets = {json.dumps(subnet_public_ids)}\n")
         fp.write(f'ssh_key_name = "{keypair_name}"\n')

@@ -4,6 +4,11 @@ variable "access_log_force_destroy" {
   default     = false
 }
 
+variable "alert_emails" {
+  description = "List of email addresses for CloudWatch alarm notifications"
+  type        = list(string)
+}
+
 variable "ami_id" {
   description = "Image for host EC2 instances. If not specified, the latest Amazon image will be used."
   type        = string
@@ -35,11 +40,6 @@ variable "environment" {
   description = "Name of environment."
   type        = string
   default     = "development"
-}
-
-variable "internet_gateway_id" {
-  description = "Internet gateway id. Usually created by 'infrahouse/service-network/aws'"
-  type        = string
 }
 
 variable "kibana_system_password" {
