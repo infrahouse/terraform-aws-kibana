@@ -60,6 +60,9 @@ Note the inputs:
 * `load_balancer_subnets` - these are subnet ids where the load balancer will be created. Can be public, but I recommend to deploy the load balancer in the private subnets and configure VPN access for users that need Kibana.
 
 The kibana module will output URL where Kibana UI is available. User elastic username and its password to access Kibana first time.
+
+<!-- BEGIN_TF_DOCS -->
+
 ## Requirements
 
 | Name | Version |
@@ -78,9 +81,9 @@ The kibana module will output URL where Kibana UI is available. User elastic use
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_kibana"></a> [kibana](#module\_kibana) | registry.infrahouse.com/infrahouse/ecs/aws | 5.11.0 |
-| <a name="module_kibana-encryptionKey"></a> [kibana-encryptionKey](#module\_kibana-encryptionKey) | registry.infrahouse.com/infrahouse/secret/aws | 1.0.2 |
-| <a name="module_kibana-password"></a> [kibana-password](#module\_kibana-password) | registry.infrahouse.com/infrahouse/secret/aws | 1.0.2 |
+| <a name="module_kibana"></a> [kibana](#module\_kibana) | registry.infrahouse.com/infrahouse/ecs/aws | 5.12.0 |
+| <a name="module_kibana-encryptionKey"></a> [kibana-encryptionKey](#module\_kibana-encryptionKey) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.0 |
+| <a name="module_kibana-password"></a> [kibana-password](#module\_kibana-password) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.0 |
 
 ## Resources
 
@@ -123,3 +126,4 @@ The kibana module will output URL where Kibana UI is available. User elastic use
 | <a name="output_kibana_url"></a> [kibana\_url](#output\_kibana\_url) | n/a |
 | <a name="output_kibana_username"></a> [kibana\_username](#output\_kibana\_username) | n/a |
 | <a name="output_load_balancer_arn"></a> [load\_balancer\_arn](#output\_load\_balancer\_arn) | n/a |
+<!-- END_TF_DOCS -->
