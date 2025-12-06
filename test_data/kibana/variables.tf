@@ -9,13 +9,13 @@ variable "role_arn" {
 }
 variable "test_zone_id" {}
 
+variable "alert_emails" {
+}
 variable "asg_subnets" {
 }
 variable "cluster_name" {
 }
 variable "elasticsearch_url" {
-}
-variable "internet_gateway_id" {
 }
 variable "kibana_system_password" {
 }

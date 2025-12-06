@@ -1,6 +1,6 @@
 module "kibana" {
   source  = "registry.infrahouse.com/infrahouse/ecs/aws"
-  version = "5.12.0"
+  version = "7.0.0"
   providers = {
     aws     = aws
     aws.dns = aws.dns
@@ -12,7 +12,7 @@ module "kibana" {
   asg_subnets                               = var.asg_subnets
   zone_id                                   = var.zone_id
   dns_names                                 = ["${var.elasticsearch_cluster_name}-kibana"]
-  internet_gateway_id                       = var.internet_gateway_id
+  alarm_emails                              = var.alert_emails
   ssh_key_name                              = var.ssh_key_name
   ssh_cidr_block                            = var.ssh_cidr_block
   container_port                            = 5601
