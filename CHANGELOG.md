@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2025-12-06
+
+### Documentation
+
+- Add output descriptions and mark password as sensitive
+
+### Features
+
+- Upgrade ECS module to v7.0.0
+
+### Miscellaneous Tasks
+
+- Update actions/checkout action to v5 ([#33](https://github.com/infrahouse/terraform-aws-kibana/issues/33))
+- Update aws-actions/configure-aws-credentials action to v5 ([#34](https://github.com/infrahouse/terraform-aws-kibana/issues/34))
+- Prepare for ECS v7 upgrade
+- Add release automation and initialize CHANGELOG
+
+### Security
+
+- Mark kibana_system_password as sensitive
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
