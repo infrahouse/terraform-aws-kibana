@@ -1,0 +1,13 @@
+framework:
+  - terraform
+skip-path:
+  - test_data
+skip-check:
+  # CKV_TF_1: Module sources pin exact versions from registry.infrahouse.com.
+  # InfraHouse standard is registry version pinning (not commit hashes);
+  # Renovate manages updates via individual PRs for explicit review.
+  - CKV_TF_1
+  # CKV_TF_2: Same rationale as CKV_TF_1 - Renovate handles module updates.
+  - CKV_TF_2
+compact: true
+quiet: false

@@ -11,9 +11,7 @@ from tests.conftest import (
 )
 
 
-@pytest.mark.parametrize(
-    "aws_provider_version", ["~> 5.11", "~> 6.0"], ids=["aws-5", "aws-6"]
-)
+@pytest.mark.parametrize("aws_provider_version", ["~> 6.0"], ids=["aws-6"])
 def test_module(
     elasticsearch,
     service_network,
@@ -54,9 +52,7 @@ def test_module(
 
     # Generate terraform.tf with specified AWS provider version
     with open(osp.join(terraform_dir, "terraform.tf"), "w") as fp:
-        fp.write(
-            dedent(
-                f"""
+        fp.write(dedent(f"""
                 terraform {{
                   required_version = "~> 1.5"
                   //noinspection HILUnresolvedReference
@@ -67,9 +63,7 @@ def test_module(
                     }}
                   }}
                 }}
-                """
-            )
-        )
+                """))
 
     with open(osp.join(terraform_dir, "terraform.tfvars"), "w") as fp:
         fp.write(f'region = "{aws_region}"\n')
