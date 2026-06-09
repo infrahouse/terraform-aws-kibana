@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.1] - 2026-06-09
+
+### Features
+
+- Enable cross-region replication on ALB access-log bucket ([#43](https://github.com/infrahouse/terraform-aws-kibana/issues/43))
+
+### Miscellaneous Tasks
+
+- Update CHANGELOG for 3.0.0
+- Bump version to 3.0.0
+
 ## [3.0.0] - 2026-06-09
 
 ### Documentation
