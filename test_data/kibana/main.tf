@@ -13,6 +13,8 @@ module "kibana" {
   ssh_key_name               = var.ssh_key_name
   zone_id                    = var.test_zone_id
   access_log_force_destroy   = true
+  # CRR replica must be a different region than where Kibana is deployed.
+  replication_region = var.region == "us-east-1" ? "us-west-2" : "us-east-1"
 
   elasticsearch_request_timeout = var.elasticsearch_request_timeout
 }

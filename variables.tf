@@ -86,3 +86,12 @@ variable "on_demand_base_capacity" {
   type        = number
   default     = null
 }
+
+variable "replication_region" {
+  description = <<-EOT
+    AWS region for cross-region replication of the ALB access-log bucket.
+    Must differ from the region this module is deployed in. Required for Vanta
+    DR compliance (the access-log bucket is an audit record that must get CRR).
+  EOT
+  type        = string
+}

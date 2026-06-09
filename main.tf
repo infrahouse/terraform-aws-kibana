@@ -1,6 +1,6 @@
 module "kibana" {
   source  = "registry.infrahouse.com/infrahouse/ecs/aws"
-  version = "7.0.0"
+  version = "8.1.0"
   providers = {
     aws     = aws
     aws.dns = aws.dns
@@ -23,6 +23,7 @@ module "kibana" {
   enable_cloudwatch_logs                    = true
   on_demand_base_capacity                   = var.on_demand_base_capacity
   access_log_force_destroy                  = var.access_log_force_destroy
+  replication_region                        = var.replication_region
   extra_instance_profile_permissions        = var.extra_instance_profile_permissions
   idle_timeout                              = var.elasticsearch_request_timeout
   asg_health_check_grace_period             = 900
