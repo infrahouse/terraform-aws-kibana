@@ -74,7 +74,8 @@ Container logs go to CloudWatch unconditionally.
 - `environment` (default `"development"`) — set it explicitly. It ends up on the module's resources
   and on the secrets, and a stray `development` in a production account is exactly the confusion the
   InfraHouse [coding standard](https://github.com/infrahouse/terraform-aws-kibana/blob/main/.claude/CODING_STANDARD.md)
-  warns about.
+  warns about. Only lowercase letters, numbers and underscores are accepted — `pre_prod`, not
+  `pre-prod`.
 
 ## Outputs
 
