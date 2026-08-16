@@ -44,7 +44,7 @@ provider "aws" {
 
 module "kibana" {
   source  = "registry.infrahouse.com/infrahouse/kibana/aws"
-  version = "3.0.1" # always pin an exact release
+  version = "4.0.0" # always pin an exact release
 
   providers = {
     aws     = aws

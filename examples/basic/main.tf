@@ -44,7 +44,7 @@ data "aws_route53_zone" "kibana" {
 
 module "kibana" {
   source  = "registry.infrahouse.com/infrahouse/kibana/aws"
-  version = "3.0.1"
+  version = "4.0.0"
 
   providers = {
     aws     = aws

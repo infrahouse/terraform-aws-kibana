@@ -1,5 +1,5 @@
 locals {
-  module_version = "3.0.1"
+  module_version = "4.0.0"
 
   kibana_url      = "https://${var.elasticsearch_cluster_name}-kibana.${data.aws_route53_zone.kibana_zone.name}"
   kibana_username = "kibana_system"

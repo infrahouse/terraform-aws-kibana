@@ -17,7 +17,7 @@ The smallest configuration that works. Everything not listed here uses the modul
 ```hcl
 module "kibana" {
   source  = "registry.infrahouse.com/infrahouse/kibana/aws"
-  version = "3.0.1"
+  version = "4.0.0"
 
   providers = {
     aws     = aws
@@ -68,7 +68,7 @@ module "elasticsearch" {
 
 module "kibana" {
   source  = "registry.infrahouse.com/infrahouse/kibana/aws"
-  version = "3.0.1"
+  version = "4.0.0"
 
   providers = {
     aws     = aws
