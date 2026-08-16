@@ -40,6 +40,13 @@ variable "environment" {
   description = "Name of environment."
   type        = string
   default     = "development"
+
+  # The secret module applies the same rule. Validating here fails the plan on
+  # this module's own input instead of deep inside a child module.
+  validation {
+    condition     = can(regex("^[a-z0-9_]+$", var.environment))
+    error_message = "environment must contain only lowercase letters, numbers, and underscores (no hyphens). Got: ${var.environment}"
+  }
 }
 
 variable "kibana_system_password" {

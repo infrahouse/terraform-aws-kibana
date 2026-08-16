@@ -185,9 +185,9 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_kibana"></a> [kibana](#module\_kibana) | registry.infrahouse.com/infrahouse/ecs/aws | 8.1.0 |
-| <a name="module_kibana-encryptionKey"></a> [kibana-encryptionKey](#module\_kibana-encryptionKey) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.1 |
-| <a name="module_kibana-password"></a> [kibana-password](#module\_kibana-password) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.1 |
+| <a name="module_kibana"></a> [kibana](#module\_kibana) | registry.infrahouse.com/infrahouse/ecs/aws | 8.4.0 |
+| <a name="module_kibana-encryptionKey"></a> [kibana-encryptionKey](#module\_kibana-encryptionKey) | registry.infrahouse.com/infrahouse/secret/aws | 1.3.0 |
+| <a name="module_kibana-password"></a> [kibana-password](#module\_kibana-password) | registry.infrahouse.com/infrahouse/secret/aws | 1.3.0 |
 
 ## Resources
 

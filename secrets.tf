@@ -5,8 +5,9 @@ resource "random_string" "kibana-encryptionKey" {
 
 module "kibana-encryptionKey" {
   source             = "registry.infrahouse.com/infrahouse/secret/aws"
-  version            = "1.1.1"
+  version            = "1.3.0"
   environment        = var.environment
+  service_name       = local.service_name
   secret_description = "Kibana encryption key for Elasticsearch cluster ${var.elasticsearch_cluster_name}"
   secret_name_prefix = "${var.elasticsearch_cluster_name}-kibana-"
   secret_value       = random_string.kibana-encryptionKey.result
@@ -17,9 +18,10 @@ module "kibana-encryptionKey" {
 
 module "kibana-password" {
   source             = "registry.infrahouse.com/infrahouse/secret/aws"
-  version            = "1.1.1"
+  version            = "1.3.0"
   environment        = var.environment
-  secret_description = "Kibana encryption key for Elasticsearch cluster ${var.elasticsearch_cluster_name}"
+  service_name       = local.service_name
+  secret_description = "Password of the kibana_system user for Elasticsearch cluster ${var.elasticsearch_cluster_name}"
   secret_name_prefix = "${var.elasticsearch_cluster_name}-kibana-password-"
   secret_value       = local.kibana_password
   readers = [
