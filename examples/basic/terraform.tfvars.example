@@ -1,0 +1,17 @@
+region      = "us-west-2"
+environment = "development"
+
+zone_name                  = "ci-cd.infrahouse.com."
+elasticsearch_cluster_name = "elastic"
+elasticsearch_url          = "https://elastic-master.ci-cd.infrahouse.com"
+
+# Do not commit the password. Pass it on the command line instead:
+# terraform apply -var="kibana_system_password=$(...)"
+# kibana_system_password = "..."
+
+asg_subnets           = ["subnet-0aaa...", "subnet-0bbb..."]
+load_balancer_subnets = ["subnet-0ccc...", "subnet-0ddd..."]
+ssh_key_name          = "my-key-pair"
+
+alert_emails       = ["ops-team@example.com"]
+replication_region = "us-east-1"

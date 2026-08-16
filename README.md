@@ -1,106 +1,169 @@
 # terraform-aws-kibana
 
-The module creates Kibana for the Elasticsearch cluster.
+[![Need Help?](https://img.shields.io/badge/Need%20Help%3F-Contact%20Us-0066CC)](https://infrahouse.com/contact)
+[![Docs](https://img.shields.io/badge/docs-github.io-blue)](https://infrahouse.github.io/terraform-aws-kibana/)
+[![Registry](https://img.shields.io/badge/Terraform-Registry-purple?logo=terraform)](https://registry.terraform.io/modules/infrahouse/kibana/aws/latest)
+[![Release](https://img.shields.io/github/release/infrahouse/terraform-aws-kibana.svg)](https://github.com/infrahouse/terraform-aws-kibana/releases/latest)
 
-# Usage
-## Prerequisites
+[![AWS ECS](https://img.shields.io/badge/AWS-ECS-orange?logo=amazonecs)](https://aws.amazon.com/ecs/)
+[![AWS EC2](https://img.shields.io/badge/AWS-EC2-orange?logo=amazonec2)](https://aws.amazon.com/ec2/)
+[![AWS ELB](https://img.shields.io/badge/AWS-ELB-orange?logo=amazonwebservices)](https://aws.amazon.com/elasticloadbalancing/)
+[![AWS Secrets Manager](https://img.shields.io/badge/AWS-Secrets%20Manager-orange?logo=amazonwebservices)](https://aws.amazon.com/secrets-manager/)
 
-Elasticsearch cluster is a natural pre-requisite of Kibana. However, the Elasticsearch cluster itself
-requires certain AWS resources. 
-Check the [elasticsearch module documentation](https://registry.terraform.io/modules/infrahouse/elasticsearch/aws/latest#dependencies) for those.
+[![Security](https://img.shields.io/github/actions/workflow/status/infrahouse/terraform-aws-kibana/vuln-scanner-pr.yml?label=Security)](https://github.com/infrahouse/terraform-aws-kibana/actions/workflows/vuln-scanner-pr.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-## Elasticsearch cluster
+Terraform module that deploys [Kibana](https://www.elastic.co/kibana) on AWS ECS in front of an
+existing Elasticsearch cluster.
 
-The Elasticsearch cluster requires two `terraform apply`-s. One with `bootstrap_mode = true` and another with 
-`bootstrap_mode = false`. Use following Terraform snippet to provision the cluster.
+## Why This Module?
+
+Kibana itself is one container, which is exactly why teams end up running it as a pet: an instance
+someone started by hand, with the `kibana_system` password in a shell history and no TLS in front of
+it. Everything that makes it a service the whole company can use is around the container, and that
+is what this module packages:
+
+- **The secrets stay secret.** The three X-Pack encryption keys and the `kibana_system` password live
+  in Secrets Manager and are injected as ECS secrets — they never appear in the task definition, in
+  user data, or in a container environment you can read from the console. An IAM policy scoped to
+  exactly those two secret ARNs is what lets the task read them.
+- **HTTPS is not an afterthought.** The load balancer gets an ACM certificate, issued and validated
+  in your Route53 zone, and the DNS record is created for you.
+- **Long searches actually finish.** Kibana's Elasticsearch request timeout and the load balancer
+  idle timeout come from one input, so the ALB cannot cut off a query that Kibana is still waiting
+  for — the failure mode that makes people believe "Kibana is flaky".
+- **First boot is understood.** Kibana migrates its saved-objects indices before it can answer
+  `/login`. The ASG and the ECS service both allow a 900-second grace period, so the first deployment
+  does not turn into an instance-replacement loop.
+- **Disposable by design.** Kibana keeps all of its state in Elasticsearch, so the task and the host
+  can be replaced at any time — which is what makes running it on spot capacity a sane trade.
+
+## Features
+
+- Kibana running as an ECS service on an EC2-backed Auto Scaling Group, sized for the workload
+- Application Load Balancer with an ACM certificate and a Route53 record
+- X-Pack encryption keys and the `kibana_system` password in AWS Secrets Manager
+- CloudWatch container logs, CloudWatch alarms and an SNS topic for `alert_emails`
+- ALB access logs in an S3 bucket replicated cross-region for audit retention
+- Optional spot capacity via `on_demand_base_capacity`
+- SSH access to the ECS hosts restricted to `ssh_cidr_block`
+
+## Quick Start
+
 ```hcl
-module "elasticsearch" {
-  source  = "infrahouse/elasticsearch/aws"
-  version = "~> 3.11"
+provider "aws" {
+  region = "us-west-2"
+}
+
+# Second provider for Route53 (the zone may live in another account).
+provider "aws" {
+  alias  = "dns"
+  region = "us-west-2"
+}
+
+module "kibana" {
+  source  = "registry.infrahouse.com/infrahouse/kibana/aws"
+  version = "3.0.1"
+
   providers = {
     aws     = aws
-    aws.dns = aws
+    aws.dns = aws.dns
   }
-  cluster_name         = "some-cluster-name"
+
+  elasticsearch_cluster_name = "elastic"
+  elasticsearch_url          = module.elasticsearch.cluster_master_url
+  kibana_system_password     = module.elasticsearch.kibana_system_password
+
+  environment           = "production"
+  zone_id               = data.aws_route53_zone.this.zone_id
+  asg_subnets           = module.service-network.subnet_private_ids
+  load_balancer_subnets = module.service-network.subnet_public_ids
+  ssh_key_name          = aws_key_pair.this.key_name
+  alert_emails          = ["ops-team@example.com"]
+  replication_region    = "us-east-1" # must differ from the deploy region
+}
+```
+
+Kibana is published at `https://<elasticsearch_cluster_name>-kibana.<zone domain>` — the `kibana_url`
+output. Sign in with an Elasticsearch user; the `elastic` superuser the first time.
+
+Note the inputs:
+
+- `elasticsearch_cluster_name` — the prefix of every resource and of the DNS record. There is no
+  separate hostname input.
+- `asg_subnets` — private subnets for the ECS host instances. Do not expose them to the internet.
+- `load_balancer_subnets` — public subnets publish Kibana on the internet; private subnets keep it
+  behind your VPN, which is the recommended deployment.
+- `replication_region` — the ALB access-log bucket is replicated cross-region, so this must be a
+  different region than the one you deploy to.
+
+### Prerequisites
+
+An Elasticsearch cluster is a natural prerequisite of Kibana, and the cluster itself needs a VPC,
+subnets and a hosted zone. See the
+[elasticsearch module documentation](https://registry.terraform.io/modules/infrahouse/elasticsearch/aws/latest#dependencies)
+for those, and [Getting Started](https://infrahouse.github.io/terraform-aws-kibana/getting-started/)
+for the full list.
+
+The Elasticsearch cluster needs two `terraform apply`s — one with `bootstrap_mode = true` and one
+with `bootstrap_mode = false`. Kibana can only connect after the second one:
+
+```hcl
+module "elasticsearch" {
+  source  = "registry.infrahouse.com/infrahouse/elasticsearch/aws"
+  version = "5.2.0"
+  providers = {
+    aws     = aws
+    aws.dns = aws.dns
+  }
+  cluster_name         = "elastic"
   cluster_master_count = 3
-  cluster_data_count   = 1
-  environment          = "development"
-  internet_gateway_id  = module.service-network.internet_gateway_id
-  key_pair_name        = aws_key_pair.test.key_name
+  cluster_data_count   = 3
+  environment          = "production"
+  key_pair_name        = aws_key_pair.this.key_name
   subnet_ids           = module.service-network.subnet_private_ids
-  zone_id              = var.zone_id
+  zone_id              = data.aws_route53_zone.this.zone_id
+  replication_region   = "us-east-1"
   bootstrap_mode       = var.bootstrap_mode
 }
 ```
 
-## Kibana
+## Documentation
 
-One the Elasticsearch cluster is ready (and by "ready" I mean master and data nodes are up & running),
-you can provision Kibana.
-```hcl
-module "kibana" {
-  source  = "infrahouse/kibana/aws"
-  version = "3.0.1"
-  providers = {
-    aws     = aws
-    aws.dns = aws
-  }
-  alert_emails               = ["ops-team@example.com"]
-  asg_subnets                = module.service-network.subnet_private_ids
-  elasticsearch_cluster_name = "some-cluster-name"
-  elasticsearch_url          = var.elasticsearch_url
-  kibana_system_password     = module.elasticsearch.kibana_system_password
-  load_balancer_subnets      = module.service-network.subnet_public_ids
-  ssh_key_name               = aws_key_pair.test.key_name
-  zone_id                    = var.zone_id
-}
-```
-Note the inputs:
-* `alert_emails` - list of email addresses for CloudWatch alarm notifications (required for monitoring ECS service health)
-* `asg_subnets` - these are subnet ids where autoscaling group with EC2 instance for Kibana ECS will be created. They need to be private subnets - you don't want to expose them to Internet.
-* `load_balancer_subnets` - these are subnet ids where the load balancer will be created. Can be public, but I recommend to deploy the load balancer in the private subnets and configure VPN access for users that need Kibana.
+Full documentation lives at
+**[infrahouse.github.io/terraform-aws-kibana](https://infrahouse.github.io/terraform-aws-kibana/)**:
 
-The kibana module will output URL where Kibana UI is available. User elastic username and its password to access Kibana first time.
+- [Getting Started](https://infrahouse.github.io/terraform-aws-kibana/getting-started/) —
+  prerequisites and the first deployment
+- [Architecture](https://infrahouse.github.io/terraform-aws-kibana/architecture/) — what the module
+  builds and how the pieces fit
+- [Configuration](https://infrahouse.github.io/terraform-aws-kibana/configuration/) — the inputs, by
+  topic
+- [Examples](https://infrahouse.github.io/terraform-aws-kibana/examples/) — common configurations
+- [Troubleshooting](https://infrahouse.github.io/terraform-aws-kibana/troubleshooting/) — what to
+  check when Kibana does not come up
+- [Upgrading](https://infrahouse.github.io/terraform-aws-kibana/upgrading/) — migrating between major
+  versions, including 1.x → 3.x
+- [Changelog](https://infrahouse.github.io/terraform-aws-kibana/changelog/) — release history
 
-## Migration from v1.x to v2.x
+## Examples
 
-**This is a breaking change.** Version 2.0.0 upgrades the underlying ECS module from v5 to v7.
+Runnable configurations are in [`examples/`](examples/):
 
-### Breaking Changes
+- [`examples/basic`](examples/basic) — the minimum configuration, in front of an Elasticsearch
+  cluster that already exists
+- [`examples/production`](examples/production) — Elasticsearch and Kibana together, private subnets
+  only, SSH restricted, alarms wired up, access logs kept
 
-1. **New Required Variable: `alert_emails`**
-   - You must now provide at least one email address for CloudWatch alarm notifications
-   - Add `alert_emails = ["your-email@example.com"]` to your module call
+## Contributing
 
-2. **Removed Variable: `internet_gateway_id`**
-   - The internet gateway is now auto-detected by the module
-   - Remove `internet_gateway_id` from your module configuration
+Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development
+setup, the coding standards and the commit message format, and [SECURITY.md](SECURITY.md) for
+reporting security issues.
 
-3. **Default Behavior Changes**
-   - CloudWatch logs are now enabled by default (was disabled in v1.x)
-   - CPU autoscaling threshold lowered from 80% to 60%
-   - Default AMI changed from Amazon Linux 2 to Amazon Linux 2023 (if not explicitly set)
+## License
 
-### Migration Steps
-
-1. Add the required `alert_emails` parameter:
-   ```hcl
-   alert_emails = ["ops-team@example.com"]
-   ```
-
-2. Remove the `internet_gateway_id` parameter (if present):
-   ```diff
-   - internet_gateway_id = module.service-network.internet_gateway_id
-   ```
-
-3. Update the module version:
-   ```hcl
-   version = "~> 2.0"
-   ```
-
-4. Run `terraform init -upgrade` to download the new module version
-
-5. Review the terraform plan for expected changes before applying
+Apache License 2.0 — see [LICENSE](LICENSE).
 
 <!-- BEGIN_TF_DOCS -->
 
@@ -109,13 +172,13 @@ The kibana module will output URL where Kibana UI is available. User elastic use
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.5 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.11, < 7.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.0, < 7.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.11, < 7.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0, < 7.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
