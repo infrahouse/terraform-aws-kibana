@@ -32,6 +32,8 @@ terraform.tfvars
 tf.plan
 .idea
 /docs/_build/
+# Generated MkDocs output
+site/
 /plan.stderr
 /plan.stdout
 __pycache__

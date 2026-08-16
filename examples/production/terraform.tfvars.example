@@ -1,0 +1,21 @@
+region      = "us-west-2"
+environment = "production"
+
+zone_name                  = "ci-cd.infrahouse.com."
+elasticsearch_cluster_name = "elastic"
+
+private_subnets = [
+  "subnet-0aaa...",
+  "subnet-0bbb...",
+  "subnet-0ccc...",
+]
+
+ssh_key_name     = "my-key-pair"
+admin_cidr_block = "10.1.0.0/16"
+
+alert_emails       = ["ops-team@example.com"]
+replication_region = "us-east-1"
+
+# Apply once with true to form the Elasticsearch cluster, then set it back to
+# false and apply again before Kibana can connect.
+bootstrap_mode = false
