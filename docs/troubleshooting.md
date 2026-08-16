@@ -56,9 +56,9 @@ Kibana started but cannot use Elasticsearch. The container log says which one it
 - **`master_not_discovered_exception`** — the cluster itself has not formed. Kibana cannot come up
   before Elasticsearch does. With the InfraHouse elasticsearch module, that means the second apply
   (`bootstrap_mode = false`) has not completed.
-- **`Incompatible Elasticsearch server version`** — the Kibana image tag is pinned inside the module
-  and Elastic requires Kibana and Elasticsearch to be on the same version. If your cluster runs a
-  newer 8.x than the module's image, upgrade the module (or pin the cluster) so the two line up.
+- **`Incompatible Elasticsearch server version`** — Elastic requires Kibana and Elasticsearch to be
+  on the same version. Check what the cluster runs (`dpkg -l | grep elasticsearch` on a node, or the
+  hiera key `profile::elastic::packages::elasticsearch_version`) and set `kibana_version` to match.
 
 ## The task stops with `AccessDeniedException` on Secrets Manager
 

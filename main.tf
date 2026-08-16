@@ -6,7 +6,7 @@ module "kibana" {
     aws.dns = aws.dns
   }
   service_name                              = local.service_name
-  docker_image                              = "docker.elastic.co/kibana/kibana:8.12.0"
+  docker_image                              = "docker.elastic.co/kibana/kibana:${var.kibana_version}"
   load_balancer_subnets                     = var.load_balancer_subnets
   ami_id                                    = var.ami_id
   asg_subnets                               = var.asg_subnets

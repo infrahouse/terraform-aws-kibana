@@ -83,6 +83,22 @@ Both are breaking changes.
 
 ## Kibana version
 
-The Kibana image tag is pinned inside the module. Elastic requires Kibana and Elasticsearch to run
-the same version, so upgrading the Elasticsearch cluster past the module's image means upgrading this
-module too. Check `main.tf` for the tag a given release ships.
+Up to and including 3.0.1 the image tag was hardcoded at `8.12.0`. It is now the `kibana_version`
+input, defaulting to `8.15.0` — the version InfraHouse-managed clusters pin through the Puppet hiera
+key `profile::elastic::packages::elasticsearch_version`.
+
+**Upgrading the module therefore upgrades Kibana**, unless you set `kibana_version` explicitly to the
+tag you were running:
+
+```hcl
+kibana_version = "8.12.0" # keep the old image
+```
+
+Before letting the version move, know that:
+
+- Elastic supports Kibana and Elasticsearch only on the same version (Elasticsearch may lead by one
+  minor mid-upgrade). Check what your cluster actually runs — `dpkg -l | grep elasticsearch` on a
+  node — rather than assuming.
+- Kibana migrates its saved-objects indices on first start after an upgrade, and the migration is
+  one-way. Take an Elasticsearch snapshot first; rolling back means restoring it.
+- Elasticsearch must be upgraded before Kibana, never after.

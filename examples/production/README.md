@@ -70,6 +70,7 @@ Sign in as `elastic` with that password.
 | admin_cidr_block | CIDR range allowed to SSH into the instances |
 | alert_emails | Addresses that receive CloudWatch alarm notifications |
 | replication_region | Region the ALB access-log buckets are replicated to |
+| kibana_version | Version of the Kibana image; must match the cluster |
 | bootstrap_mode | Elasticsearch cluster bootstrap flag |
 
 ## Outputs
@@ -94,5 +95,11 @@ Sign in as `elastic` with that password.
   record, and `terraform destroy` should not silently delete it.
 - Kibana is stateless. It stores its saved objects in Elasticsearch, so
   replacing an instance loses nothing.
+- Kibana and Elasticsearch must run the same version. The cluster's version is a
+  Puppet hiera key (`profile::elastic::packages::elasticsearch_version`), not a
+  Terraform input, so check a running node with `dpkg -l | grep elasticsearch`
+  and set the module's `kibana_version` to match. This example pins the module
+  version that predates that input; add `kibana_version` once you move the
+  `version` pin forward.
 - To publish Kibana on the internet instead, move `load_balancer_subnets` to
   public subnets. The instances should stay in private subnets either way.

@@ -39,8 +39,9 @@ flowchart TB
 
 ## Source files
 
-- **`main.tf`** — the core `module.kibana`. Runs the official Kibana image on container port 5601 and
-  configures Kibana entirely through environment variables and ECS secrets. Fixes the sizing
+- **`main.tf`** — the core `module.kibana`. Runs the official Kibana image
+  (`docker.elastic.co/kibana/kibana:${var.kibana_version}`) on container port 5601 and configures
+  Kibana entirely through environment variables and ECS secrets. Fixes the sizing
   (`t3.medium` hosts, 1024 CPU units and 2 GB for the container), the health checks, and the
   900-second health-check grace periods that give Kibana time to migrate its saved-objects indices
   on first start.

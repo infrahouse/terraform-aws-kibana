@@ -6,7 +6,23 @@
   "dependencyDashboardApproval": true,
   "prConcurrentLimit": 1,
   "rebaseWhen": "conflicted",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Kibana image version, interpolated into docker_image in main.tf",
+      "managerFilePatterns": ["variables.tf"],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)\\s+default\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+      ]
+    }
+  ],
   "packageRules": [
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["docker.elastic.co/kibana/kibana"],
+      "description": "Kibana must match the 8.x Elasticsearch clusters this module fronts",
+      "allowedVersions": "<9"
+    },
     {
       "matchManagers": ["github-actions"],
       "matchFileNames": [
