@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.0] - 2026-08-16
+
+### Documentation
+
+- Implement Terraform Module Requirements
+
+### Features
+
+- Pin the Kibana image with a kibana_version input
+
+### Miscellaneous Tasks
+
+- Bump ecs to 8.4.0 and secret to 1.3.0
+- Fix hook file permissions
+
 ## [3.0.1] - 2026-06-09
 
 ### Features
