@@ -49,6 +49,25 @@ variable "environment" {
   }
 }
 
+variable "kibana_version" {
+  description = <<-EOT
+    Version of the Kibana Docker image to run.
+    Elastic supports Kibana and Elasticsearch only on the same version (during an
+    upgrade Elasticsearch may lead by one minor), so this must match the version
+    of the cluster in elasticsearch_url. In InfraHouse deployments the cluster
+    version comes from the Puppet hiera key
+    profile::elastic::packages::elasticsearch_version.
+  EOT
+  type        = string
+  # renovate: datasource=docker depName=docker.elastic.co/kibana/kibana
+  default = "8.15.0"
+
+  validation {
+    condition     = can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.]+)?$", var.kibana_version))
+    error_message = "kibana_version must be an exact version such as 8.15.0, not a floating tag. Got: ${var.kibana_version}"
+  }
+}
+
 variable "kibana_system_password" {
   description = "Password for kibana_system user. This user is an Elasticsearch built-in user."
   type        = string

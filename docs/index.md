@@ -13,7 +13,7 @@ owns a single IAM policy and the random encryption key, everything else comes fr
 
 - **Kibana on ECS** — the official `docker.elastic.co/kibana/kibana` image runs as an ECS service on
   an EC2-backed Auto Scaling Group, sized (`t3.medium`, 1 vCPU / 2 GB for the container) for a Kibana
-  workload.
+  workload. `kibana_version` pins the tag so it can be kept on the version your cluster runs.
 - **HTTPS out of the box** — an Application Load Balancer with an ACM certificate that is issued and
   DNS-validated in your Route53 zone, published as
   `https://<elasticsearch_cluster_name>-kibana.<zone domain>`.

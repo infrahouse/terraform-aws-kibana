@@ -55,8 +55,23 @@ defaults is the auto-generated table in the
 - `extra_instance_profile_permissions` (default `null`) — a JSON IAM policy document attached to the
   ASG instance profile.
 
-The instance type (`t3.medium`), the container size (1 vCPU, 2 GB) and the Kibana image tag are fixed
-by the module and are not exposed as inputs.
+The instance type (`t3.medium`) and the container size (1 vCPU, 2 GB) are fixed by the module and are
+not exposed as inputs.
+
+## Kibana version
+
+- `kibana_version` (default `8.15.0`) — the tag of the `docker.elastic.co/kibana/kibana` image.
+
+Elastic supports Kibana and Elasticsearch only on the **same** version; during an upgrade
+Elasticsearch may lead by one minor. Set this to the version your cluster runs. In InfraHouse
+deployments that version is a Puppet hiera key,
+`profile::elastic::packages::elasticsearch_version` — the Elasticsearch Terraform module does not
+pin it, so check the hiera data of the environment the cluster belongs to (and confirm with
+`dpkg -l | grep elasticsearch` on a node).
+
+Upgrading Kibana migrates its saved-objects indices in Elasticsearch, and that migration is one-way.
+Take a snapshot before changing this on a cluster you care about, and see
+[Upgrading](upgrading.md#kibana-version).
 
 ## Logging and monitoring
 
